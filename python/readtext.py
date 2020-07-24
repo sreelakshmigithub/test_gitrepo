@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 print("here i am reading the text file")
-file =open('logcat.txt', w)
+file =open('logcat.txt', 'w')
