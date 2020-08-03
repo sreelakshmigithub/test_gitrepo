@@ -1,0 +1,105 @@
+//#############################################################################
+//#
+//# Copyright (C) 2019 Continental Automotive Systems, Inc.
+//#
+//# Alle Rechte vorbehalten. All Rights Reserved.
+//# The reproduction, transmission or use of this document or its contents is
+//# not permitted without express written authority.
+//# Offenders will be liable for damages. All rights, including rights created
+//# by patent grant or registration of a utility model or design, are reserved.
+//#
+//#############################################################################
+
+
+iip_test_cflags = [
+    "-DIIP_TEST_CONSOLE",
+    "-DWITHOUT_SYSTEMD",
+    "-DLINUX",
+    "-D_GLIBCXX_USE_NANOSLEEP",
+    "-pthread",
+    "-fexceptions",
+    "-fstrict-aliasing",
+    "-fPIC",
+    "-Wall",
+    "-Wextra",
+    "-Wformat",
+    "-Wformat-security",
+    "-Wconversion",
+    "-DANDROID_IMPL=android::hardware::automotive::vehicle::V2_0",
+    "-DCONTI_IMPL=vendor::continental::hardware::automotive::vehicle::V1_0",
+]
+
+
+// ===============================================
+// BUILD SETTINGS VhaludpcanClient
+// ===============================================
+cc_library_shared {
+    name: "lib-udpcanPropertiesClient",
+    rtti: true,
+    srcs: [
+        "src/VhaludpcanClient.cpp",
+        "src/VhaludpcanClientImpl.cpp",
+    ],
+
+
+    include_dirs: [
+        "hardware/interfaces/automotive/vehicle/2.0/default/common/include",
+    ],
+    local_include_dirs: [
+        "inc",
+    ],
+
+    export_include_dirs: [
+        "inc",
+    ],
+
+    product_variables: {
+        platform_sdk_version: {
+            // API level
+            cflags: ["-DPLATFORM_SDK_VERSION=%d"],
+        },
+    },
+
+    cflags: iip_test_cflags,
+
+    header_libs: ["conti_vhal_v2_0_common_headers"],
+
+    shared_libs: [
+        "libhidlbase",
+        "liblog",
+        "android.hardware.automotive.vehicle@2.0",
+        "android.hardware.automotive.vehicle@2.0-manager-lib",
+    ],
+     static_libs: [
+        "libcutils"
+    ],
+
+    vendor: true,
+}
+
+cc_binary
+{
+    name: "vhal-android-udpcantest",
+    vendor: true,
+    clang: true,
+
+    cflags: [
+        "-DANDROID_IMPL=android::hardware::automotive::vehicle::V2_0",
+        "-DCONTI_IMPL=vendor::continental::hardware::automotive::vehicle::V1_0",
+    ],
+
+    srcs: [
+        "./vhal-android-udpcan_client/VhalAndroidudpcanTest.cpp",
+    ],
+
+    local_include_dirs: [ "./vhal-android-udpcan_client" ],
+
+    shared_libs: [
+        "libbase",
+        "libutils",
+        "libhidlbase",
+        "android.hardware.automotive.vehicle@2.0",
+        "vendor.continental.hardware.automotive.vehicle@1.0",
+    ]
+}
+
